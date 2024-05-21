@@ -1,0 +1,106 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Properties;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.asserts.SoftAssert;
+
+@TestInstance(Lifecycle.PER_CLASS)
+public class SeleniumWebdriverTest2 {
+    String login = "user";
+    String pw = "12345678";
+    String url = "http://localhost:8083";
+    public WebDriver driver;
+    Properties locators = new Properties();
+
+    public SeleniumWebdriverTest2() {
+    }
+
+    @BeforeAll
+    void SetUpBeforeClass() throws IOException {
+        System.setProperty("webdriver.chromedriver.driver", "C:\\Program Files\\Python310\\Scripts");
+        this.driver = new ChromeDriver();
+        FileInputStream profile = new FileInputStream("src//test//java//Locators.properties");
+        this.locators.load(profile);
+        this.driver.manage().window().maximize();
+        this.driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20L));
+    }
+
+    @AfterAll
+    void TearDownAfterClass() {
+        this.driver.quit();
+    }
+
+    void redmine_login(String url, String login, String pw) {
+        String link_Connexion = this.locators.getProperty("link_Connexion");
+        String txt_UserName = this.locators.getProperty("txt_UserName");
+        String txt_Password = this.locators.getProperty("txt_Password");
+        String btn_Login = this.locators.getProperty("btn_Login");
+        this.driver.get(url);
+        this.driver.findElement(By.xpath(link_Connexion)).click();
+        this.driver.findElement(By.name(txt_UserName)).sendKeys(new CharSequence[]{login});
+        this.driver.findElement(By.id(txt_Password)).sendKeys(new CharSequence[]{pw});
+        this.driver.findElement(By.name(btn_Login)).click();
+        String titre_obtenu = this.driver.getTitle();
+        String titre_attendu = "Ma page - Redmine 1269";
+        Assertions.assertEquals(titre_attendu, titre_obtenu);
+    }
+
+    void configurerNbHeures(String nbHeures) {
+        String lnk_Administration = this.locators.getProperty("lnk_Administration");
+        String lnk_Configuration = this.locators.getProperty("lnk_Configuration");
+        String lnk_SuiviTemps = this.locators.getProperty("lnk_SuiviTemps");
+        String txt_MaxHeures = this.locators.getProperty("txt_MaxHeures");
+        String btn_SauvMaxHeures = this.locators.getProperty("btn_SauvMaxHeures");
+        this.driver.findElement(By.xpath(lnk_Administration)).click();
+        this.driver.findElement(By.xpath(lnk_Configuration)).click();
+        this.driver.findElement(By.xpath(lnk_SuiviTemps)).click();
+        this.driver.findElement(By.xpath(txt_MaxHeures)).sendKeys(new CharSequence[]{nbHeures});
+        this.driver.findElement(By.xpath(btn_SauvMaxHeures)).click();
+        String title_conf_attendu = "Configuration - Administration - Redmine 1269";
+        String title_administration_attendu = "Administration - Redmine 1269";
+        String max_heure_attendu = "9";
+        String msg_attendu = "Mise à jour effectuée avec succès.";
+        String titre_main_rst = this.driver.getTitle();
+        Assertions.assertEquals(title_conf_attendu, titre_main_rst);
+        this.driver.findElement(By.xpath(lnk_Administration)).click();
+        String title_admin_rst = this.driver.getTitle();
+        Assertions.assertEquals(title_administration_attendu, title_admin_rst);
+        this.driver.findElement(By.xpath(lnk_Configuration)).click();
+        this.driver.findElement(By.xpath(lnk_SuiviTemps)).click();
+        this.driver.findElement(By.xpath(txt_MaxHeures)).clear();
+        this.driver.findElement(By.xpath(txt_MaxHeures)).sendKeys(new CharSequence[]{nbHeures});
+        String max_heures_actual = this.driver.findElement(By.xpath(txt_MaxHeures)).getAttribute("value");
+        SoftAssert mon_assertion = new SoftAssert();
+        mon_assertion.assertEquals(max_heure_attendu, max_heures_actual);
+        this.driver.findElement(By.xpath(btn_SauvMaxHeures)).click();
+        String confirmation_actual = this.driver.findElement(By.xpath(lnk_Configuration)).getText();
+        mon_assertion.assertEquals(msg_attendu, confirmation_actual);
+        mon_assertion.assertAll();
+    }
+
+    void logout() {
+        String lnk_Deconnxion = this.locators.getProperty("lnk_Deconnxion");
+        this.driver.findElement(By.xpath(lnk_Deconnxion)).click();
+    }
+
+    @Test
+    void TC1() {
+        this.redmine_login(this.url, this.login, this.pw);
+        this.configurerNbHeures("9");
+        this.logout();
+    }
+}
