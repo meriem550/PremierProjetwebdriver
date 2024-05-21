@@ -1,0 +1,57 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Properties;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+@TestInstance(Lifecycle.PER_CLASS)
+class SeleniumWebdriverTest1 {
+    public WebDriver driver;
+    Properties locators = new Properties();
+
+    SeleniumWebdriverTest1() {
+    }
+
+    @BeforeAll
+    void SetUpBeforeClass() throws IOException {
+        System.setProperty("webdriver.chromedriver.driver", "C:\\Program Files\\Python310\\Scripts");
+        this.driver = new ChromeDriver();
+        FileInputStream profile = new FileInputStream("src//test//java//Locators.properties");
+        this.locators.load(profile);
+        this.driver.manage().window().maximize();
+        this.driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20L));
+    }
+
+    @AfterAll
+    void TearDownAfterClass() {
+        this.driver.quit();
+    }
+
+    @Test
+    void redmine_login() {
+        String link_Connexion = this.locators.getProperty("link_Connexion");
+        String txt_UserName = this.locators.getProperty("txt_UserName");
+        String txt_Password = this.locators.getProperty("txt_Password");
+        String btn_Login = this.locators.getProperty("btn_Login");
+        String login = "user";
+        String pw = "12345678";
+        String url = "http://localhost:8083";
+        this.driver.get(url);
+        this.driver.findElement(By.xpath(link_Connexion)).click();
+        this.driver.findElement(By.name(txt_UserName)).sendKeys(new CharSequence[]{login});
+        this.driver.findElement(By.id(txt_Password)).sendKeys(new CharSequence[]{pw});
+        this.driver.findElement(By.name(btn_Login)).click();
+    }
+}
